@@ -1,0 +1,41 @@
+<h1>Achievements</h1>
+<table border="1" cellpadding="3">
+  <tr>
+    <th>Code</th>
+    <th>Email</th>
+    <th>changesetId</th>
+    <th>Repository</th>
+    <th>Created</th>
+  </tr>
+#foreach($count in $aoAchievements)
+  <tr>
+    <td>$count.code</td>
+    <td>$count.email</td>
+    <td>$count.changesetId</td>
+    <td>$count.repository</td>
+    <td>$count.created</td>
+  </tr>
+#end
+</table>
+
+<h1>Counts</h1>
+<table border="1" cellpadding="3">
+#foreach($count in $aoCounts)
+  <tr>
+    <td>$count.code</td>
+    <td>$count.email</td>
+    <td>$count.amount</td>
+  </tr>
+#end
+</table>
+
+<h1>MetaData</h1>
+<table border="1" cellpadding="3">
+#foreach($metaData in $metaDatas)
+  <tr>
+    <td>$metaData.userId</td>
+    <td>$metaData.metaKey</td>
+    <td>$metaData.metaValue</td>
+  </tr>
+#end
+</table>

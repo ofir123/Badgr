@@ -1,0 +1,117 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        
+        <param name="plugin-icon">images/logo-badgr-16.png</param><!-- 16x16 -->
+        <param name="plugin-logo">images/logo-badgr-72.png</param><!-- 72x72 -->
+        <param name="plugin-banner">images/banner-badgr.png</param><!-- 920x450 -->
+    </plugin-info>
+    
+    <!-- I18N -->
+    <resource type="i18n" name="i18n" location="i18n.messages"/>
+    
+    <!-- Component Imports -->
+    <component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" />
+    <component-import key="changesetIndex" interface="com.atlassian.stash.idx.ChangesetIndex" />
+    <component-import key="loggingService" interface="com.atlassian.stash.config.log.LoggingService" />
+    <component-import key="soyTemplateRenderer" interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
+    <component-import key="transactionTemplate" interface="com.atlassian.sal.api.transaction.TransactionTemplate" />
+    <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
+    <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
+    <component-import key="pluginAccessor" interface="com.atlassian.plugin.PluginAccessor"/>
+    
+    
+    <component key="achievementManager" class="nl.stefankohler.stash.badgr.DefaultAchievementManager">
+      <interface>nl.stefankohler.stash.badgr.AchievementManager</interface>
+    </component>   
+    <component key="soyAchievementService" class="nl.stefankohler.stash.badgr.web.soy.SoyAchievementService" />
+    <component key="notificationService" class="nl.stefankohler.stash.badgr.NotificationService" />
+    <component key="stashUserMetaDataService" class="nl.stefankohler.stash.badgr.StashUserMetaDataService" />
+    
+    <component key="achievementGrantedListener" class="nl.stefankohler.stash.badgr.listener.AchievementGrantedListener" />
+    <component key="repositoryEventListener" class="nl.stefankohler.stash.badgr.listener.RepositoryEventListener" />
+
+    <!-- Active Objects -->
+    <ao key="ao-module">
+        <entity>nl.stefankohler.stash.badgr.model.AoAchievement</entity>
+        <entity>nl.stefankohler.stash.badgr.model.AoCount</entity>
+        <entity>nl.stefankohler.stash.badgr.model.AoNotification</entity>
+        <entity>nl.stefankohler.stash.badgr.model.StashUserMetaData</entity>
+    </ao>
+    <component key="tx-processor"  class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor" /> 
+    
+    <!-- Indexer -->
+    <changeset-indexer key="badgrIndexer" class="nl.stefankohler.stash.badgr.idx.BadgrChangesetIndex"/>
+    
+    <!-- Web Items -->
+      <web-section key="addon-user-menu-section" name="Add-on Web Section" weight="200" location="header.global.secondary.user">
+        <label/> <!-- no label so this section on the menu has no title -->
+        <condition class="nl.stefankohler.stash.badgr.web.conditions.DisplayAddonWebSection"/>
+      </web-section>
+
+    <web-item key="badgr-menu" name="Badgr Achievements web item" weight="50" section="addon-user-menu-section">
+        <styleClass>badgr-link</styleClass>
+        <label key="badgr.web.menu.achievements">Achievements</label>
+        <link>/plugins/servlet/achievements/users/${currentUser.slug}</link>
+    </web-item>
+    
+    
+    
+    <web-item key="badgr-profile-achievements-tab" name="Badgr Achievements tab" section="stash.user.profile.secondary.tabs" weight="20">
+        <label key="badgr.web.profile.achievements.tab">Achievements</label>
+        <link>/plugins/servlet/achievements/users/${profileUser.name}</link>
+        <tooltip key="badgr.web.profile.achievements.tab.description">View user achievements</tooltip>
+        <condition class="com.atlassian.stash.web.conditions.IsLoggedInCondition"/>
+    </web-item>
+    
+    <servlet key="badgr-debug-servlet" class="nl.stefankohler.stash.badgr.web.BadgrDebugServlet">
+        <url-pattern>/badgr-debug</url-pattern>
+    </servlet>
+
+    <servlet key="badgr-profile-servlet" class="nl.stefankohler.stash.badgr.web.BadgrUserProfileServlet">
+        <url-pattern>/achievements/*</url-pattern>
+    </servlet>
+
+    <rest key="badgr-notification-rest" path="/badgr" version="1.0">
+        <description>Provides REST resources for the Badgr Notifications.</description>
+    </rest>
+    
+    <!-- Web Resources -->
+    <resource type="download" name="badges/" location="badges/" />
+    <resource type="download" name="images/" location="images/" />
+    
+    <stash-resource key="badgr-serverside-soy" name="Badgr Soy Templates">
+        <directory location="/views/pages/" />
+
+        <dependency>com.atlassian.stash.stash-web-plugin:server-soy-templates</dependency>
+        <dependency>${project.groupId}.${project.artifactId}:badgr-soy</dependency>
+    </stash-resource>
+
+    <stash-resource key="badgr-soy" name="Badgr Soy Templates">
+        <directory location="/views/achievements/">
+            <exclude>/**/*-min.*</exclude>
+        </directory>
+
+        <context>nl.stefankohler.stash.badgr.achievements.user</context>
+
+        <dependency>com.atlassian.stash.stash-web-plugin:global</dependency>
+        <dependency>com.atlassian.stash.stash-web-plugin:infinite-table</dependency>
+    </stash-resource>
+
+    <web-resource key="badgr-resources" name="Badgr Web Resources" >
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+
+        <resource type="download" name="badgr.css" location="style/badgr.css" />
+
+        <resource type="download" name="jquery.knob.js" location="js/jquery.knob.js" />
+        <resource type="download" name="badgr-notifications.js" location="js/notification.js" />
+        <resource type="download" name="badgr.js" location="js/badgr.js" />
+
+        <context>atl.general</context>
+        <context>atl.admin</context>
+        <context>atl.userprofile</context>
+    </web-resource>
+
+</atlassian-plugin>

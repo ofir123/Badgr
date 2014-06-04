@@ -42,7 +42,7 @@
  * @param achievement
  **/
 {template .achievementRow}
-	<td data-key-id="{$achievement.code}">
+	<td data-key-id="{$achievement.code}" class="clickable-badge">
 		{if $achievement.changeset == null}
 		  {call .unAchievedBadge data="all" /}
 		{else}

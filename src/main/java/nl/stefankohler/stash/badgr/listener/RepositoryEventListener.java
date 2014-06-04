@@ -12,7 +12,7 @@ import com.atlassian.stash.content.Changeset;
 import com.atlassian.stash.event.RepositoryEvent;
 import com.atlassian.stash.event.RepositoryPullEvent;
 import com.atlassian.stash.event.RepositoryPushEvent;
-import com.atlassian.stash.history.HistoryService;
+import com.atlassian.stash.commit.CommitService;
 import com.atlassian.stash.repository.Repository;
 import com.atlassian.stash.user.Permission;
 import com.atlassian.stash.user.SecurityService;
@@ -28,14 +28,14 @@ import com.atlassian.stash.util.PageRequestImpl;
 public class RepositoryEventListener {
 
     private final AchievementManager achievementManager;
-    private final HistoryService historyService;
+    private final CommitService commitService;
     private final SecurityService securityService;
     private final StashUserMetaDataService metaDataService;
 
-    public RepositoryEventListener(AchievementManager achievementManager, HistoryService historyService, SecurityService securityService,
+    public RepositoryEventListener(AchievementManager achievementManager, CommitService commitService, SecurityService securityService,
             StashUserMetaDataService metaDataService) {
         this.achievementManager = achievementManager;
-        this.historyService = historyService;
+        this.commitService = commitService;
         this.securityService = securityService;
         this.metaDataService = metaDataService;
     }
@@ -87,7 +87,7 @@ public class RepositoryEventListener {
         Page<Changeset> changesets = securityService.doWithPermission("Retrieve last changeset in repository for badgr", Permission.REPO_READ,
                 new Operation<Page<Changeset>, RuntimeException>() {
                     public Page<Changeset> perform() {
-                        return historyService.getChangesets(repository, null, null, new PageRequestImpl(0, 1));
+                        return commitService.getChangesets(repository, null, null, new PageRequestImpl(0, 1));
                     }
                 });
         for (Changeset changeset : changesets.getValues()) {

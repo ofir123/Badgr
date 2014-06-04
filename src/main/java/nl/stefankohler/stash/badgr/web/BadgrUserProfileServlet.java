@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 
 public class BadgrUserProfileServlet extends HttpServlet {
 
+	private static final long serialVersionUID = -6165243642072731055L;
     private final SoyTemplateRenderer soyTemplateRenderer;
     private final WebResourceManager webResourceManager;
     private final UserService userService;
@@ -45,20 +46,49 @@ public class BadgrUserProfileServlet extends HttpServlet {
             String pathInfo = req.getPathInfo();
 
             String[] pathParts = pathInfo.substring(1).split("/");
-            if (pathParts.length != 2 || !"users".equalsIgnoreCase(pathParts[0])) {
+            
+            if (pathParts.length < 1) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            String userSlug = pathParts[1];
-            StashUser user = userService.getUserBySlug(userSlug);
+            
+            
+            if ("users".equalsIgnoreCase(pathParts[0])) {
+                
+                if (pathParts.length < 2) {
+                    resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
+                
+                String userSlug = pathParts[1];
+                StashUser user = userService.getUserBySlug(userSlug);
+                
+                if (user == null) {
+                    resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
 
-            if (user == null) {
+                render(resp, "badgr.user.achievements",
+                        ImmutableMap.<String, Object> of(
+                        		"user", user, 
+                        		"achievements", achievementService.findSoyAchievementsForUser(user, null)));
+            } else if ("badges".equalsIgnoreCase(pathParts[0])) {
+
+                if (pathParts.length < 2) {
+                    render(resp, "badgr.user.achievements", 
+                            ImmutableMap.<String, Object> of(
+                                    "user", authenticationContext.getCurrentUser(), 
+                                    "achievements", achievementService.findAllSoyAchievements(null)));
+                } else {
+                    String code = pathParts[1];
+                    render(resp, "badgr.user.achievers",
+                            ImmutableMap.<String, Object> of(
+                                    "user", authenticationContext.getCurrentUser(),
+                                    "achievements", achievementService.findEmailsForAchievement(code, null)));
+                }
+            } else {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
             }
-
-            render(resp, "badgr.user.achievements",
-                    ImmutableMap.<String, Object> of("user", user, "achievements", achievementService.findSoyAchievementsForUser(user, null)));
         } else {
             resp.sendRedirect(navBuilder.buildAbsolute());
         }

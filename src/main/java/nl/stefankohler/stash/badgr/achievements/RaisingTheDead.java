@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atlassian.stash.content.Changeset;
 import com.atlassian.stash.content.MinimalChangeset;
-import com.atlassian.stash.history.HistoryService;
+import com.atlassian.stash.commit.CommitService;
 
 /**
  * The Raising the Dead Achievement.
@@ -24,16 +24,16 @@ public class RaisingTheDead extends AbstractAchievement {
 
     private static final int MONTHS_AGO = 6;
 
-    private final HistoryService historyService;
+    private final CommitService commitService;
 
     /**
      * Constructs a new RaisingTheDead achievement.
-     * @param historyService HistoryService implementation to check the last commit to a repo.
+     * @param commitService CommitService implementation to check the last commit to a repo.
      */
     @Autowired
-    public RaisingTheDead(HistoryService historyService) {
+    public RaisingTheDead(CommitService commitService) {
         super();
-        this.historyService = checkNotNull(historyService);
+        this.commitService = checkNotNull(commitService);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class RaisingTheDead extends AbstractAchievement {
         Changeset changeset = (Changeset) subject;
         if (!changeset.getParents().isEmpty()) {
             MinimalChangeset parent = changeset.getParents().iterator().next();
-            Changeset previous = historyService.getChangeset(changeset.getRepository(), parent.getId());
+            Changeset previous = commitService.getChangeset(changeset.getRepository(), parent.getId());
 
             DateTime createdOn = new DateTime(changeset.getAuthorTimestamp());
             DateTime previousCreated = new DateTime(previous.getAuthorTimestamp());

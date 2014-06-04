@@ -1,0 +1,96 @@
+{namespace badgr.achievers}
+
+/**
+ * @param achievementPage
+ **/
+{template .achieverTable}
+    {call widget.aui.table}
+        {param id: 'achievements-table' /}
+        {param dataAttributes: [ 'start' : $achievementPage.start, 'size' : $achievementPage.size, 'is-last-page' : $achievementPage.isLastPage ] /}
+        {param extraClasses: 'tall-rows' + ($achievementPage.size == 0 ? ' no-results' : '') /}
+        
+        {param bodyRowsHtml}
+            {foreach $achievement in $achievementPage.values}
+              {if index($achievement)%3 == 0}<tr>{/if}
+                 {call .achieverRow}
+                   {param achievement: $achievement /}
+                 {/call}
+              {if index($achievement)%2 == 2 or isLast($achievement)}</tr>{/if}
+            {/foreach}
+        {/param}
+        
+        {param footRowsHtml}
+            {if $achievementPage.size == 0}
+                {call .noResultsRow /}
+            {/if}
+        {/param}
+    {/call}
+{/template}
+
+/**
+ * @param achievement
+ **/
+{template .achievementHeader}
+      <div class="badge">
+        <img src="{$achievement.badge}" title="{{stash_i18n($achievement.description, $achievement.name)|noAutoescape}}" alt="{{stash_i18n($achievement.description, $achievement.name)|noAutoescape}}" />
+      </div>
+      <div class="badge-info">
+        <strong>{{stash_i18n($achievement.name, $achievement.name)|noAutoescape}}</strong>
+        <small>{{stash_i18n($achievement.description, $achievement.description)|noAutoescape}}</small>
+        <p>
+            Changeset: {call .link}
+              {param changeset: $achievement.changeset /}
+              {param repository: $achievement.repository /}
+            {/call}
+        </p>
+      </div>
+{/template}
+
+/**
+ *
+ **/
+{template .noResultsRow}
+  <tr class="no-results-row">
+     <td>
+         <div>{{stash_i18n('badgr.web.achievements.tab.table.noresults', 'No achievements found for this user')|noAutoescape}}</div>
+     </td>
+  </tr>
+{/template}
+
+/**
+ * @param achievement
+ **/
+{template .achieverRow}
+    <td data-key-id="{$achievement.code}">
+    {call .badge data="all" /}
+    </td>
+{/template}
+
+
+/**
+ * @param achievement
+ **/
+{template .badge}
+      <div class="badge-info">
+        <strong>{{stash_i18n($achievement.userEmail, $achievement.userEmail)|noAutoescape}}</strong>
+        <p>
+            Changeset: {call .link}
+              {param changeset: $achievement.changeset /}
+              {param repository: $achievement.repository /}
+            {/call} <br>
+            When: {$achievement.changeset.authorTimestamp}
+        </p>
+      </div>
+{/template} 
+
+/**
+ * @param changeset
+ * @param? repository
+ */
+{template .link}
+    {if $repository}
+        <a class="lozenge changesetid" href="{nav_changeset($repository.project, $repository, $changeset.id)}">{$changeset.displayId}</a>
+    {else}
+        <span class="lozenge changesetid">{$changeset.displayId}</span>
+    {/if}
+{/template}

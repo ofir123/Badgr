@@ -19,7 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.atlassian.stash.content.Changeset;
 import com.atlassian.stash.content.MinimalChangeset;
-import com.atlassian.stash.history.HistoryService;
+import com.atlassian.stash.commit.CommitService;
 import com.atlassian.stash.repository.Repository;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -28,16 +28,16 @@ public class RaisingTheDeadTest {
     private final static String CHANGESET_ID = "abcdefg";
 
     @Mock
-    private HistoryService historyService;
+    private CommitService commitService;
     private RaisingTheDead achievement;
 
     @Before
     public void setup() {
         Changeset changeset = mock(Changeset.class);
         when(changeset.getAuthorTimestamp()).thenReturn(new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate());
-        when(historyService.getChangeset(any(Repository.class), eq(CHANGESET_ID))).thenReturn(changeset);
+        when(commitService.getChangeset(any(Repository.class), eq(CHANGESET_ID))).thenReturn(changeset);
 
-        achievement = new RaisingTheDead(historyService);
+        achievement = new RaisingTheDead(commitService);
     }
 
     @Test

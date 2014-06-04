@@ -14,6 +14,7 @@ public class SoyAchievement {
     private final WebResourceUrlProvider urlProvider;
     private final Integer count;
     private final Repository repository;
+    private String userEmail;
 
     public SoyAchievement(Achievement achievement, Changeset changeset, Integer count, Repository repository, WebResourceUrlProvider urlProvider) {
         this.achievement = achievement;
@@ -21,6 +22,14 @@ public class SoyAchievement {
         this.count = (count == null) ? 0 : count;
         this.repository = repository;
         this.urlProvider = urlProvider;
+    }
+    
+    public void setUserEmail(String email) {
+        this.userEmail = email;
+    }
+    
+    public String getUserEmail() {
+        return this.userEmail;
     }
 
     public String getCode() {

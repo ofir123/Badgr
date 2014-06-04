@@ -3,32 +3,31 @@ package nl.stefankohler.stash.badgr.idx;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
-import com.atlassian.sal.api.transaction.TransactionCallback;
-import com.atlassian.sal.api.transaction.TransactionTemplate;
-import com.atlassian.stash.user.Person;
-import com.google.common.collect.Maps;
 import nl.stefankohler.stash.badgr.AchievementManager;
 import nl.stefankohler.stash.badgr.achievements.Achievement;
-
 import nl.stefankohler.stash.badgr.model.AoCount;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.atlassian.stash.content.Change;
+import com.atlassian.sal.api.transaction.TransactionCallback;
+import com.atlassian.sal.api.transaction.TransactionTemplate;
+import com.atlassian.stash.commit.CommitService;
 import com.atlassian.stash.content.Changeset;
+import com.atlassian.stash.content.ChangesetsBetweenRequest;
 import com.atlassian.stash.content.MinimalChangeset;
-import com.atlassian.stash.history.HistoryService;
 import com.atlassian.stash.idx.ChangesetIndexer;
 import com.atlassian.stash.idx.IndexingContext;
 import com.atlassian.stash.repository.Repository;
+import com.atlassian.stash.user.Person;
 import com.atlassian.stash.util.Page;
 import com.atlassian.stash.util.PageRequest;
 import com.atlassian.stash.util.PageRequestImpl;
+import com.google.common.collect.Maps;
 
 public class BadgrChangesetIndex implements ChangesetIndexer {
 
@@ -39,14 +38,14 @@ public class BadgrChangesetIndex implements ChangesetIndexer {
     private static final String ID = "nl.stefankohler.stash.BadgrChangesetIndex";
     private static final int PAGE_LIMIT = 250;
 
-    private final HistoryService historyService;
+    private final CommitService commitService;
     private final AchievementManager achievementManager;
     private final TransactionTemplate transactionTemplate;
 
-    public BadgrChangesetIndex(TransactionTemplate transactionTemplate, HistoryService historyService,
+    public BadgrChangesetIndex(TransactionTemplate transactionTemplate, CommitService CommitService,
                                AchievementManager achievementManager) {
 
-        this.historyService = checkNotNull(historyService);
+        this.commitService = checkNotNull(CommitService);
         this.achievementManager = checkNotNull(achievementManager);
         this.transactionTemplate = transactionTemplate;
     }
@@ -102,8 +101,14 @@ public class BadgrChangesetIndex implements ChangesetIndexer {
     }
 
     private void processChanges(AchievementContext achievementContext, Changeset changeset, String parentId, PageRequest pageRequest) {
-        Page<Change> changes = historyService.getChanges(changeset.getRepository(), changeset.getId(), parentId, pageRequest);
-        for (Change change : changes.getValues()) {
+      ChangesetsBetweenRequest request = new ChangesetsBetweenRequest.Builder(changeset.getRepository())
+      .exclude(changeset.getId())
+      .include(parentId)
+      .build();  
+      
+      
+        Page<Changeset> changes = commitService.getChangesetsBetween(request, pageRequest);
+        for (Changeset change : changes.getValues()) {
             processObject(achievementContext, changeset, change, Achievement.AchievementType.CHANGE);
         }
 

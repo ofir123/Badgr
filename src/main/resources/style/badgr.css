@@ -49,3 +49,21 @@
 .knob.badge-info p {
     text-align: right;
 }
+
+div.achiever-email {
+    position: relative;
+    z-index: 10;
+    background-color: #111;
+    border: 2px solid white;
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #EEE;
+    left: 300px;
+    top: 40px;
+}
+
+.clickable-badge IMG, .clickable-badge DIV {
+	cursor: pointer;
+}

@@ -19,3 +19,32 @@
 </body>
 </html>
 {/template}
+
+/**
+ * @param user
+ * @param achievements
+ **/
+{template .achievers}
+<html>
+<head>
+    <meta name="decorator" content="stash.users.profile">
+    <meta name="activeTab" content="badgr-profile-achievements-tab">
+    <meta name="userSlug" content="{$user.slug}">
+    <title>{$user.displayName} / Achievers</title>
+</head>
+<body>
+    {if $achievements.size <= 0}
+        <h3>Bunch of slackers around here. No one's gotten this one yet.</h3>
+    {else}
+        {call badgr.achievers.achievementHeader}
+            {param achievement: $achievements.values[0] /}
+        {/call}
+        <h3>Over Achievers</h3>
+        {call badgr.achievers.achieverTable}
+            {param achievementPage: $achievements /}
+        {/call}    
+    {/if}
+    
+</body>
+</html>
+{/template}

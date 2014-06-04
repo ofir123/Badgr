@@ -18,7 +18,15 @@ public abstract class ExtensionBasedAchievement extends AbstractAchievement {
     public boolean isConditionMet(Object subject) {
         Change change = (Change) subject;
         if (change.getType().equals(ChangeType.ADD) && StringUtils.isNotEmpty(change.getPath().getExtension())) {
-            return change.getPath().getExtension().endsWith(getExtension());
+            String[] validExtensions = getExtensions();
+            String extension = change.getPath().getExtension();
+            if (extension != null) {
+                for (int i = 0; i < validExtensions.length; i++) {
+                    if (validExtensions[i].equals(extension)) {
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;
@@ -28,5 +36,16 @@ public abstract class ExtensionBasedAchievement extends AbstractAchievement {
      * @return the file extension for the Achievement to check on.
      */
     public abstract String getExtension();
+    
+    /**
+     * Support for multiple valid extensions, 
+     * just wrap the single extension in an array
+     * @return string[] array of extensions
+     */
+    public String[] getExtensions() {
+        String[] exts = new String[1];
+        exts[0] = getExtension();
+        return exts;
+    }
 
 }

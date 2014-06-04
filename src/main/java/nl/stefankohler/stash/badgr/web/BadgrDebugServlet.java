@@ -19,7 +19,7 @@ import nl.stefankohler.stash.badgr.model.StashUserMetaData;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.stash.content.Changeset;
-import com.atlassian.stash.history.HistoryService;
+import com.atlassian.stash.commit.CommitService;
 import com.atlassian.stash.repository.Repository;
 import com.atlassian.stash.repository.RepositoryService;
 import com.atlassian.stash.user.Person;
@@ -33,17 +33,17 @@ public class BadgrDebugServlet extends HttpServlet {
     private final TemplateRenderer renderer;
     private final ActiveObjects ao;
     private final AchievementManager achievementManager;
-    private final HistoryService historyService;
+    private final CommitService commitService;
     private RepositoryService repositoryService;
 
     public BadgrDebugServlet(TemplateRenderer renderer, ActiveObjects ao, AchievementManager achievementManager, RepositoryService repositoryService,
-            HistoryService historyService) {
+            CommitService commitService) {
         super();
         this.renderer = renderer;
         this.ao = ao;
         this.achievementManager = achievementManager;
         this.repositoryService = repositoryService;
-        this.historyService = historyService;
+        this.commitService = commitService;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class BadgrDebugServlet extends HttpServlet {
         Page<? extends Repository> repositories = repositoryService.findAll(new PageRequestImpl(0, 1));
         Repository repository = repositories.getValues().iterator().next();
 
-        Changeset changeset = historyService.getChangesets(repository, null, null, new PageRequestImpl(0, 1)).getValues().iterator().next();
+        Changeset changeset = commitService.getChangesets(repository, null, null, new PageRequestImpl(0, 1)).getValues().iterator().next();
 
         List<Achievement> achievements = achievementManager.getAchievements(Achievement.AchievementType.CHANGE);
         for (Achievement achievement : achievements) {

@@ -1,40 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>ofirbrukner.stash</groupId>
+    <groupId>nl.stefankohler.stash</groupId>
     <artifactId>badgr</artifactId>
-    <version>2.2-SNAPSHOT</version>
-    
+    <version>2.2.2-SNAPSHOT</version>
     <name>Badgr</name>
     <packaging>atlassian-plugin</packaging>
     <inceptionYear>June 2012</inceptionYear>
-
-    <description>
-      Code, Commit and Achieve!
-      Badgr will grant you achievements based on your commits to Atlassian's Stash.
-      So commit often and collect all the achievements in Badgr!
-	</description>
-    
+    <description>Code, Commit and Achieve! Badgr will grant you achievements based on your commits to Atlassian's Stash. So commit often and collect all the achievements in Badgr!</description>
     <scm>
-      <connection>scm:git:https://github.com/ofir123/Badgr.git</connection>
-      <developerConnection>scm:git:file:///${basedir}</developerConnection>
-      <url>https://github.com/ofir123/Badgr</url>
+        <connection>scm:hg:https://bitbucket.org/stefankohler/stash-badgr</connection>
+        <developerConnection>scm:hg:file:///${basedir}</developerConnection>
+        <url>https://bitbucket.org/stefankohler/stash-badgr</url>
     </scm>
-
     <organization>
-    	<name>Ofir Brukner</name>
-    	<url>https://github.com/ofir123</url>
+        <name>Stefan Kohler</name>
+        <url>http://www.stefankohler.nl</url>
     </organization>
-    
-
     <dependencies>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
         </dependency>
-        
         <dependency>
             <groupId>com.atlassian.stash</groupId>
             <artifactId>stash-api</artifactId>
@@ -53,12 +42,18 @@
             <version>${stash.version}</version>
             <scope>provided</scope>
         </dependency>
-        
-        <dependency>
-          <groupId>com.atlassian.activeobjects</groupId>
-          <artifactId>activeobjects-plugin</artifactId>
-          <version>${activeobjects.version}</version>
-          <scope>provided</scope>
+		<dependency>
+			<groupId>com.atlassian.stash</groupId>
+            <artifactId>stash-page-objects</artifactId>
+            <version>${stash.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+		<dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-plugin</artifactId>
+            <version>${activeobjects.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
@@ -66,12 +61,11 @@
             <version>2.7.0</version>
             <scope>provided</scope>
         </dependency>
-        
         <dependency>
-          <groupId>com.atlassian.plugins</groupId>
-          <artifactId>atlassian-plugins-webfragment</artifactId>
-          <version>2.12.0</version>
-          <scope>provided</scope>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-webfragment</artifactId>
+            <version>2.12.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins.rest</groupId>
@@ -80,10 +74,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-          <groupId>com.atlassian.plugins</groupId>
-          <artifactId>atlassian-plugins-webresource</artifactId>
-          <version>2.12.0</version>
-          <scope>provided</scope>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-webresource</artifactId>
+            <version>2.12.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.templaterenderer</groupId>
@@ -97,31 +91,29 @@
             <version>1.1.1</version>
             <scope>provided</scope>
         </dependency>
-        
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.4</version>
             <scope>provided</scope>
         </dependency>
-                
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>4.11</version>
             <scope>test</scope>
-        </dependency> 
-        <dependency>
-          <groupId>com.atlassian.activeobjects</groupId>
-          <artifactId>activeobjects-test</artifactId>
-          <version>${activeobjects.version}</version>
-          <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>hsqldb</groupId>
-          <artifactId>hsqldb</artifactId>
-          <version>1.8.0.10</version>
-          <scope>test</scope>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-test</artifactId>
+            <version>${activeobjects.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.10</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -129,64 +121,53 @@
             <version>1.9.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>2.5.6</version>
-			<scope>provided</scope>
-		</dependency>
     </dependencies>
-
     <build>
-      <plugins>
-        <plugin>
-          <groupId>com.atlassian.maven.plugins</groupId>
-          <artifactId>maven-stash-plugin</artifactId>
-          <version>${amps.version}</version>
-          <extensions>true</extensions>
-          <configuration>
-            <allowGoogleTracking>false</allowGoogleTracking>
-            <products>
-                <product>
-                    <id>stash</id>
-                    <instanceId>stash</instanceId>
-                    <containerId>${stash.containerId}</containerId>
-                    <version>${stash.version}</version>
-                    <dataVersion>${stash.data.version}</dataVersion>
-                </product>
-            </products>
-          </configuration>
-        </plugin>
-        
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <excludes>
-              <exclude>it/**/*.java</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
-
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-eclipse-plugin</artifactId>
-            <configuration> 
-                <downloadJavadocs>false</downloadJavadocs>
-                <downloadSources>false</downloadSources>
-            </configuration> 
-        </plugin>
-      </plugins>
-
-      <pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-stash-plugin</artifactId>
+                <version>${amps.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <allowGoogleTracking>false</allowGoogleTracking>
+                    <products>
+                        <product>
+                            <id>stash</id>
+                            <instanceId>stash</instanceId>
+                            <containerId>${stash.containerId}</containerId>
+                            <version>${stash.version}</version>
+                            <dataVersion>${stash.data.version}</dataVersion>
+                        </product>
+                    </products>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>it/**/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <configuration>
+                    <downloadJavadocs>false</downloadJavadocs>
+                    <downloadSources>false</downloadSources>
+                </configuration>
+            </plugin>
+        </plugins>
+        <pluginManagement>
             <plugins>
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
                 <plugin>
@@ -209,7 +190,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <execute />
+                                        <execute/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -217,15 +198,13 @@
                     </configuration>
                 </plugin>
             </plugins>
-       </pluginManagement>
+        </pluginManagement>
     </build>
-    
     <properties>
-    	<stash.version>3.0.4</stash.version>
-    	<stash.data.version>3.0.4</stash.data.version>
+        <stash.version>2.11.4</stash.version>
+        <stash.data.version>2.11.4</stash.data.version>
         <stash.containerId>tomcat7x</stash.containerId>
-        <amps.version>4.2.0</amps.version>
+        <amps.version>4.2.20</amps.version>
         <activeobjects.version>0.17.8</activeobjects.version>
     </properties>
-    
 </project>

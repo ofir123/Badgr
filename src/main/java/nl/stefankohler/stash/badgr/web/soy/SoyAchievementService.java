@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,14 +22,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.stash.content.Changeset;
-import com.atlassian.stash.history.HistoryService;
+import com.atlassian.stash.commit.CommitService;
 import com.atlassian.stash.repository.Repository;
 import com.atlassian.stash.repository.RepositoryService;
 import com.atlassian.stash.user.StashUser;
+import com.atlassian.stash.user.UserService;
 import com.atlassian.stash.util.Page;
 import com.atlassian.stash.util.PageRequest;
 import com.atlassian.stash.util.PageRequestImpl;
 import com.atlassian.stash.util.PageUtils;
+
 
 /**
  * SoyAchievementService for getting Achievements for displaying.<br>
@@ -40,18 +44,19 @@ public class SoyAchievementService {
 
     private final AchievementManager achievementManager;
     private final ActiveObjects ao;
-    private final HistoryService historyService;
+    private final CommitService commitService;
     private final RepositoryService repositoryService;
+    private final UserService userService;
 
     private final WebResourceUrlProvider urlProvider;
 
     @Autowired
-    public SoyAchievementService(AchievementManager achievementManager, ActiveObjects ao, HistoryService historyService, RepositoryService repositoryService,
-            WebResourceUrlProvider urlProvider) {
+    public SoyAchievementService(AchievementManager achievementManager, ActiveObjects ao, CommitService commitService, RepositoryService repositoryService, UserService userService, WebResourceUrlProvider urlProvider) {
         this.achievementManager = achievementManager;
         this.ao = ao;
-        this.historyService = historyService;
+        this.commitService = commitService;
         this.repositoryService = repositoryService;
+        this.userService = userService;
         this.urlProvider = urlProvider;
     }
 
@@ -77,6 +82,63 @@ public class SoyAchievementService {
                 .buildRestrictedPageRequest(achievements.size());
         return (Page<? extends SoyAchievement>) PageUtils.createPage(soyAchievements, limitedPageRequest);
     }
+    
+    public Page<? extends Achievement> findAllSoyAchievements(@Nullable PageRequest pageRequest) {
+        List<Achievement> achievements = achievementManager.getAchievements();
+        
+        final PageRequest limitedPageRequest = pageRequest == null ? new PageRequestImpl(0, achievements.size()) : pageRequest
+                .buildRestrictedPageRequest(achievements.size());
+        return (Page<? extends Achievement>) PageUtils.createPage(achievements, limitedPageRequest);
+    }
+    
+
+    public Page<? extends SoyAchievement> findEmailsForAchievement(@Nonnull final String achievementCode, 
+        @Nullable PageRequest pageRequest) {
+            
+        checkNotNull(achievementCode, "achievementCode must not be null");
+        
+        Achievement achievement = achievementManager.getAchievement(achievementCode);
+        
+        // sparse achievement selects full values, including email
+        Query query = Query.select().where("CODE = ?", achievement.getCode());
+        AoAchievement[] aoAchievements = ao.find(AoAchievement.class, query);
+        
+        List<SoyAchievement> achievers = new ArrayList<SoyAchievement>(aoAchievements.length);
+        for (AoAchievement aoAchievement : aoAchievements) {
+            
+            String email = aoAchievement.getEmail();
+            StashUser user = userService.findUserByNameOrEmail(email);
+            if (user == null) {
+                // user not in the system anymore, fell off LDAP I guess
+                continue;
+            }
+            
+            Repository repository = repositoryService.getById(aoAchievement.getRepository());
+            
+            Changeset changeset = null;
+            if (repository == null) {
+                changeset = new DummyChangeset(aoAchievement.getChangesetId());
+            } else {
+                changeset = commitService.getChangeset(repository, aoAchievement.getChangesetId());
+            }
+            
+            AoCount aoCount = achievementManager.getCounting(achievement, user);
+            Integer count = (aoCount == null) ? 0 : aoCount.getAmount();
+            
+            SoyAchievement soyAchievement = new SoyAchievement(achievement, changeset, count, repository, urlProvider);
+            soyAchievement.setUserEmail(email);
+            achievers.add(soyAchievement);
+        }
+        
+        PageRequest limitedPageRequest = null;
+        if (pageRequest == null) {
+            limitedPageRequest = new PageRequestImpl(0, achievers.size());
+        } else {
+            limitedPageRequest = pageRequest.buildRestrictedPageRequest(achievers.size());
+        }
+        
+        return (Page<? extends SoyAchievement>) PageUtils.createPage(achievers, limitedPageRequest);
+    }
 
     private SoyAchievement buildSoyAchievement(Achievement achievement, StashUser user) {
         Changeset changeset = null;
@@ -91,7 +153,7 @@ public class SoyAchievementService {
             if (repository == null) {
                 changeset = new DummyChangeset(aoAchievements[0].getChangesetId());
             } else {
-                changeset = historyService.getChangeset(repository, aoAchievements[0].getChangesetId());
+                changeset = commitService.getChangeset(repository, aoAchievements[0].getChangesetId());
             }
         }
 
@@ -100,4 +162,6 @@ public class SoyAchievementService {
 
         return new SoyAchievement(achievement, changeset, count, repository, urlProvider);
     }
+
+    
 }

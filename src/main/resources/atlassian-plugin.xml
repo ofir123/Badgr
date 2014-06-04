@@ -57,11 +57,9 @@
         <link>/plugins/servlet/achievements/users/${currentUser.slug}</link>
     </web-item>
     
-    
-    
     <web-item key="badgr-profile-achievements-tab" name="Badgr Achievements tab" section="stash.user.profile.secondary.tabs" weight="20">
         <label key="badgr.web.profile.achievements.tab">Achievements</label>
-        <link>/plugins/servlet/achievements/users/${profileUser.name}</link>
+        <link>/plugins/servlet/achievements/users/${profileUser.slug}</link>
         <tooltip key="badgr.web.profile.achievements.tab.description">View user achievements</tooltip>
         <condition class="com.atlassian.stash.web.conditions.IsLoggedInCondition"/>
     </web-item>

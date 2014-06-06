@@ -9,10 +9,12 @@ import nl.stefankohler.stash.badgr.Achievement;
  * @author Ofir Brukner
  * @since 2.1
  */
+ 
 @Achievement
 public class CppLevel1 extends ExtensionBasedAchievement {
 
     private static final Integer COUNTING_LIMIT = 25;
+	private static final String[] extensions = { "cpp", "c" };
 
     @Override
     public String getBadge() {
@@ -21,7 +23,12 @@ public class CppLevel1 extends ExtensionBasedAchievement {
 
     @Override
     public String getExtension() {
-        return "cpp";
+        return extensions[0];
+    }
+	
+	@Override
+    public String[] getExtensions() {
+        return extensions;
     }
 
     @Override

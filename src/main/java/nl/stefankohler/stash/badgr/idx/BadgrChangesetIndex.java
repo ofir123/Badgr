@@ -96,8 +96,10 @@ public class BadgrChangesetIndex implements ChangesetIndexer {
         String parentId = (parents.isEmpty()) ? "" : parents.iterator().next().getId();
 
         processObject(achievementContext, changeset, changeset, Achievement.AchievementType.CHANGESET);
-
-        processChanges(achievementContext, changeset, parentId, new PageRequestImpl(0, PAGE_LIMIT));
+        
+		if (!parentId.equals("")) {
+			processChanges(achievementContext, changeset, parentId, new PageRequestImpl(0, PAGE_LIMIT));
+		}
     }
 
     private void processChanges(AchievementContext achievementContext, Changeset changeset, String parentId, PageRequest pageRequest) {

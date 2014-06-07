@@ -95,7 +95,7 @@
         <context>nl.stefankohler.stash.badgr.achievements.user</context>
 
         <dependency>com.atlassian.stash.stash-web-plugin:global</dependency>
-        <dependency>com.atlassian.stash.stash-web-plugin:infinite-table</dependency>
+        <dependency>com.atlassian.stash.stash-web-plugin:paged-table</dependency>
     </stash-resource>
 
     <web-resource key="badgr-resources" name="Badgr Web Resources" >

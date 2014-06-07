@@ -9,7 +9,7 @@
         {param dataAttributes: [ 'start' : $achievementPage.start, 'size' : $achievementPage.size, 'is-last-page' : $achievementPage.isLastPage ] /}
         {param extraClasses: 'tall-rows' + ($achievementPage.size == 0 ? ' no-results' : '') /}
         
-        {param bodyRowsHtml}
+        {param content}
             {foreach $achievement in $achievementPage.values}
               {if index($achievement)%3 == 0}<tr>{/if}
                  {call .achieverRow}
@@ -19,7 +19,7 @@
             {/foreach}
         {/param}
         
-        {param footRowsHtml}
+        {param tfootContent}
             {if $achievementPage.size == 0}
                 {call .noResultsRow /}
             {/if}
@@ -35,8 +35,10 @@
         <img src="{$achievement.badge}" title="{{stash_i18n($achievement.description, $achievement.name)|noAutoescape}}" alt="{{stash_i18n($achievement.description, $achievement.name)|noAutoescape}}" />
       </div>
       <div class="badge-info">
-        <strong>{{stash_i18n($achievement.name, $achievement.name)|noAutoescape}}</strong>
-        <small>{{stash_i18n($achievement.description, $achievement.description)|noAutoescape}}</small>
+        <div class="badge-desc">
+			<strong>{{stash_i18n($achievement.name, $achievement.name)|noAutoescape}}</strong>
+			<small>{{stash_i18n($achievement.description, $achievement.description)|noAutoescape}}</small>
+		</div>
         <p>
             Changeset: {call .link}
               {param changeset: $achievement.changeset /}

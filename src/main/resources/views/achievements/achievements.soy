@@ -9,7 +9,7 @@
 	    {param dataAttributes: [ 'start' : $achievementPage.start, 'size' : $achievementPage.size, 'is-last-page' : $achievementPage.isLastPage ] /}
 	    {param extraClasses: 'tall-rows' + ($achievementPage.size == 0 ? ' no-results' : '') /}
 	    
-	    {param bodyRowsHtml}
+	    {param content}
 	        {foreach $achievement in $achievementPage.values}
 	          {if index($achievement)%3 == 0}<tr>{/if}
 	             {call .achievementRow}
@@ -19,7 +19,7 @@
 	        {/foreach}
 	    {/param}
 	    
-	    {param footRowsHtml}
+	    {param tfootContent}
 	        {if $achievementPage.size == 0}
 	            {call .noResultsRow /}
 	        {/if}
@@ -60,8 +60,10 @@
         <img src="{$achievement.badge}" title="{{stash_i18n($achievement.description, $achievement.name)|noAutoescape}}" alt="{{stash_i18n($achievement.description, $achievement.name)|noAutoescape}}" />
       </div>
       <div class="badge-info">
-        <strong>{{stash_i18n($achievement.name, $achievement.name)|noAutoescape}}</strong>
-        <small>{{stash_i18n($achievement.description, $achievement.description)|noAutoescape}}</small>
+        <div class="badge-desc">
+			<strong>{{stash_i18n($achievement.name, $achievement.name)|noAutoescape}}</strong>
+			<small>{{stash_i18n($achievement.description, $achievement.description)|noAutoescape}}</small>
+		</div>
         <p>
 	        Changeset: {call .link}
 	          {param changeset: $achievement.changeset /}
@@ -79,8 +81,10 @@
     <input type="text" value="{$achievement.count}" class="badgr-dial" data-min="0" data-max="{$achievement.countingLimit}" data-readOnly="true" data-displayInput=false data-width="107" data-thickness="0.2" data-bgcolor="#c8c8c8" data-fgColor="#00a942">
   </div>
   <div class="badge-info knob">
-    <strong>{{stash_i18n($achievement.name, $achievement.name)|noAutoescape}}</strong>
-    <small>{{stash_i18n($achievement.description, $achievement.description)|noAutoescape}}</small>
+    <div class="badge-desc">
+		<strong>{{stash_i18n($achievement.name, $achievement.name)|noAutoescape}}</strong>
+		<small>{{stash_i18n($achievement.description, $achievement.description)|noAutoescape}}</small>
+	</div>
     <p>
       {$achievement.count} / {$achievement.countingLimit}
     </p>

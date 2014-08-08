@@ -24,7 +24,7 @@ public class PythonLevelTest {
         achievement = new PythonLevel1();
 
         path = mock(Path.class);
-        when(path.getExtension()).thenReturn("py");
+        when(path.toString()).thenReturn(".py");
     }
 
     @Test

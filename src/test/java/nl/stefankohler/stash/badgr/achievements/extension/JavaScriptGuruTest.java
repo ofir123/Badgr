@@ -24,7 +24,7 @@ public class JavaScriptGuruTest {
         achievement = new JavaScriptGuru();
 
         path = mock(Path.class);
-        when(path.getExtension()).thenReturn("js");
+        when(path.toString()).thenReturn(".js");
     }
 
     @Test

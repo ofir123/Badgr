@@ -24,7 +24,7 @@ public class JadeDynastyTest {
         achievement = new JadeDynasty();
 
         path = mock(Path.class);
-        when(path.getExtension()).thenReturn("jade");
+        when(path.toString()).thenReturn(".jade");
     }
 
     @Test

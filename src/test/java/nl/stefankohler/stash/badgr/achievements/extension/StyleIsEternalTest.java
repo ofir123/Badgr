@@ -24,7 +24,7 @@ public class StyleIsEternalTest {
         achievement = new StyleIsEternal();
 
         path = mock(Path.class);
-        when(path.getExtension()).thenReturn("css");
+        when(path.toString()).thenReturn(".css");
     }
 
     @Test

@@ -17,8 +17,9 @@ import org.slf4j.LoggerFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.stash.commit.CommitService;
+import com.atlassian.stash.content.Change;
 import com.atlassian.stash.content.Changeset;
-import com.atlassian.stash.content.ChangesetsBetweenRequest;
+import com.atlassian.stash.content.ChangesRequest;
 import com.atlassian.stash.content.MinimalChangeset;
 import com.atlassian.stash.idx.ChangesetIndexer;
 import com.atlassian.stash.idx.IndexingContext;
@@ -94,24 +95,21 @@ public class BadgrChangesetIndex implements ChangesetIndexer {
         
         Collection<MinimalChangeset> parents = changeset.getParents();
         String parentId = (parents.isEmpty()) ? "" : parents.iterator().next().getId();
-
+                
         processObject(achievementContext, changeset, changeset, Achievement.AchievementType.CHANGESET);
         
 		if (!parentId.equals("")) {
-			processChanges(achievementContext, changeset, parentId, new PageRequestImpl(0, PAGE_LIMIT));
+			processChanges(achievementContext, changeset, new PageRequestImpl(0, PAGE_LIMIT));
 		}
     }
 
-    private void processChanges(AchievementContext achievementContext, Changeset changeset, String parentId, PageRequest pageRequest) {
-      ChangesetsBetweenRequest request = new ChangesetsBetweenRequest.Builder(changeset.getRepository())
-      .exclude(changeset.getId())
-      .include(parentId)
-      .build();  
-      
-      
-        Page<Changeset> changes = commitService.getChangesetsBetween(request, pageRequest);
-        for (Changeset change : changes.getValues()) {
-            processObject(achievementContext, changeset, change, Achievement.AchievementType.CHANGE);
+    private void processChanges(AchievementContext achievementContext, Changeset changeset, PageRequest pageRequest) {
+    	ChangesRequest request = new ChangesRequest.Builder(changeset.getRepository(), changeset.getId()).build();
+    	
+    	Page<Change> changes = commitService.getChanges(request, pageRequest);
+                
+        for (Change change : changes.getValues()) {            
+        	processObject(achievementContext, changeset, change, Achievement.AchievementType.CHANGE);
         }
 
         if (!changes.getIsLastPage()) {
@@ -119,22 +117,22 @@ public class BadgrChangesetIndex implements ChangesetIndexer {
 
             // release the memory before recursing
             changes = null;
-            processChanges(achievementContext, changeset, parentId, nextPageRequest);
+            processChanges(achievementContext, changeset, nextPageRequest);
         }
     }
 
     private void processObject(AchievementContext achievementContext, Changeset changeset,
-                               Object validator, Achievement.AchievementType achievementType) {
-        try {
-            for (Achievement achievement : achievementManager.getAchievements(achievementType)) {
-                if (achievement.isConditionMet(validator)) {
-                    achievementContext.incrementCount(achievement, changeset.getAuthor(), changeset);
-                }
-            }
-        } catch (Exception e) {
-            // catch-all; if there is an exception, log the message but continue the indexing.
-            LOG.error("Couldn't process object: " + validator, e);
-        }
+            Object validator, Achievement.AchievementType achievementType) {
+		try {
+			for (Achievement achievement : achievementManager.getAchievements(achievementType)) {				
+				if (achievement.isConditionMet(validator)) {					
+					achievementContext.incrementCount(achievement, changeset.getAuthor(), changeset);
+				}
+			}
+			} catch (Exception e) {
+				// catch-all; if there is an exception, log the message but continue the indexing.
+				LOG.error("Couldn't process object: " + validator, e);
+		}
     }
 
     private class AchievementContext {

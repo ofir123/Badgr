@@ -14,7 +14,7 @@ import nl.stefankohler.stash.badgr.Achievement;
 public class CppLevel1 extends ExtensionBasedAchievement {
 
     private static final Integer COUNTING_LIMIT = 25;
-	private static final String[] extensions = { "cpp", "c" };
+	private static final String[] extensions = { "cpp", "c", "cc" };
 
     @Override
     public String getBadge() {

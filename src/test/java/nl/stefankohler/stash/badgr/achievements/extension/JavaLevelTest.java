@@ -29,7 +29,7 @@ public class JavaLevelTest {
         achievement = new JavaLevel1();
 
         path = mock(Path.class);
-        when(path.toString()).thenReturn(".java");
+        when(path.getExtension()).thenReturn("java");
     }
 
     @Test

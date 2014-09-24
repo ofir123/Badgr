@@ -24,7 +24,7 @@ public class WebmasterTest {
         achievement = new Webmaster();
 
         path = mock(Path.class);
-        when(path.toString()).thenReturn(".html");
+        when(path.getExtension()).thenReturn("html");
     }
 
     @Test

@@ -28,7 +28,7 @@ public class CppLevelTest {
         achievement = new CppLevel1();
 
         path = mock(Path.class);
-        when(path.toString()).thenReturn(".cpp");
+        when(path.getExtension()).thenReturn("cpp");
     }
 
     @Test

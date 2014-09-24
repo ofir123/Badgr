@@ -25,7 +25,7 @@ public class StyleHeroTest {
         achievement = new StyleHero();
 
         path = mock(Path.class);
-        when(path.toString()).thenReturn(".styl");
+        when(path.getExtension()).thenReturn("styl");
     }
 
     @Test

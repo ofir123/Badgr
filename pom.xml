@@ -205,8 +205,8 @@
         </pluginManagement>
     </build>
     <properties>
-        <stash.version>3.2.0</stash.version>
-        <stash.data.version>3.2.0</stash.data.version>
+        <stash.version>3.3.0</stash.version>
+        <stash.data.version>3.3.0</stash.data.version>
         <stash.containerId>tomcat7x</stash.containerId>
         <amps.version>5.0.3</amps.version>
         <activeobjects.version>0.17.8</activeobjects.version>

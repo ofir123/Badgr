@@ -16,19 +16,19 @@ public abstract class ExtensionBasedAchievement extends AbstractAchievement {
 
     @Override
     public boolean isConditionMet(Object subject) {
-    	Change change = (Change) subject;
-        // For some reason, path.getExtension() didn't work with 4 letters extensions.
-    	String path = change.getPath().toString();
-        int extensionIndex = path.lastIndexOf('.');
-        if ((extensionIndex > -1) && (change.getType().equals(ChangeType.ADD))) {
-	    	String extension = path.substring(extensionIndex+1);
+        Change change = (Change) subject;
+        if (change.getType().equals(ChangeType.ADD) && StringUtils.isNotEmpty(change.getPath().getExtension())) {
             String[] validExtensions = getExtensions();
-            for (int i = 0; i < validExtensions.length; i++) {
-                if (validExtensions[i].equals(extension)) {
-                    return true;
+            String extension = change.getPath().getExtension();
+            if (extension != null) {
+                for (int i = 0; i < validExtensions.length; i++) {
+                    if (validExtensions[i].equals(extension)) {
+                        return true;
+                    }
                 }
             }
         }
+
         return false;
     }
 
